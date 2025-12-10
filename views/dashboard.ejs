@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body style="padding:2rem; font-family:sans-serif;">
+    <h1>Witaj <%= user.username %> (<span style="color:blue"><%= user.role %></span>)</h1>
+    
+    <h3>Twoje Dokumenty (IDOR)</h3>
+    <ul>
+        <% invoices.forEach(inv => { %>
+            <li>
+                <a href="/invoice/<%= inv.id %>" target="_blank">Pobierz fakturę #<%= inv.id %></a>
+                </li>
+        <% }) %>
+    </ul>
+
+    <h3>Ustawienia (Parameter Tampering)</h3>
+    <form action="/user/update" method="POST">
+        <label>Zmień nazwę:</label>
+        <input name="username" value="<%= user.username %>">
+        <button type="submit">Zapisz</button>
+    </form>
+
+    <% if(user.role === 'admin') { %>
+        <div style="margin-top:20px; border:2px solid red; padding:10px;">
+            <h3>STREFA ADMINA</h3>
+            <p>Usuwanie systemu (Method Tampering)</p>
+            <form action="/admin/delete?_method=DELETE" method="POST">
+                <button type="submit">KASUJ WSZYSTKO</button>
+            </form>
+        </div>
+    <% } %>
+    
+    <p style="margin-top:50px; color:gray; font-size:0.8em;">
+        Debug: <a href="/debug/dump">/debug/dump</a> (Public Info Leak)
+    </p>
+</body>
+</html>

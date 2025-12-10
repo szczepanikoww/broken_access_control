@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body style="background:#f4f4f4; padding:2rem; font-family:sans-serif;">
+    <h2>Logowanie</h2>
+    <% if(error){ %><div style="color:red"><%= error %></div><% } %>
+    <form action="/login" method="POST">
+        <input name="username" value="alice@example.test"><br><br>
+        <input name="password" type="password" value="AlicePass123!"><br><br>
+        <button type="submit">Wejdź</button>
+    </form>
+</body>
+</html>
