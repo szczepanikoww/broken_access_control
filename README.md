@@ -85,7 +85,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 
 ### Zadanie 4. IDOR (Insecure Direct Object Reference)
 * **Cel:** Znajdź ukrytą fakturę zawierającą flagę.
-* **Opis:** W panelu administratora widoczne są faktury nr 100 i 102. Faktura 101 jest ukryta na liście, ale dostępna przez API.
+* **Opis:** W panelu administratora widoczne są faktury nr 100 i 102. Nie wszystkie faktury muszą być pokazane na liście.
 
 <details>
   <summary>Hint</summary>
@@ -103,7 +103,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
   <summary>Hint</summary>
   
   1. Będąc zalogowanym jako Alice, otwórz edycję swojego profilu.
-  2. W narzędziach developerskich (F12) zmień wartość ukrytego pola `id` z `2` na `1`.
+  2. W narzędziach developerskich zmień wartość ukrytego pola `id` z `2` na `1`.
   3. Wpisz nowe hasło i zapisz zmiany.
   4. Wyloguj się i zaloguj na konto `admin` nowym hasłem.
 
@@ -111,7 +111,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 
 ### Zadanie 6. Misconfigured Access Control
 * **Cel:** Pobierz fakturę innego użytkownika.
-* **Opis:** Panel użytkownika (Frontend) pokazuje tylko Twoje faktury, ale Backend (API) pozwala pobrać dowolną fakturę, jeśli znasz jej ID.
+* **Opis:** Panel użytkownika pokazuje tylko Twoje faktury, ale Backend pozwala pobrać dowolną fakturę, jeśli znasz jej ID.
 
 <details>
   <summary>Hint</summary>
