@@ -6,134 +6,164 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
-// --- DANE W PAMIĘCI RAM (Zamiast Bazy Danych) ---
-// Proces Node.js alokuje to na stercie (Heap).
-// Restart procesu = reset danych.
+// --- DANE W PAMIĘCI RAM ---
+
 const USERS = [
-    { id: 1, username: 'admin@example.test', password: 'AdminPass123!', role: 'admin' },
-    { id: 2, username: 'alice@example.test', password: 'AlicePass123!', role: 'user' }
+    { 
+        // ZMIANA: Default Credentials (Częsty błąd w IoT/Teleinformatyce)
+        id: 1, username: 'admin', password: 'admin', role: 'admin', 
+        firstName: 'System', lastName: 'Administrator', address: 'Server Room 1', phone: '000-000-000' 
+    },
+    { 
+        id: 2, username: 'alice@test.com', password: 'alice', role: 'user', 
+        firstName: 'Alice', lastName: 'Wonderland', address: 'Rabbit Hole 2', phone: '123-456-789' 
+    },
+    { 
+        id: 3, username: 'bob@test.com', password: 'bob', role: 'user', 
+        firstName: 'Bob', lastName: 'Builder', address: 'Construction Site 5', phone: '987-654-321' 
+    },
+    { 
+        id: 4, username: 'charlie@test.com', password: 'charlie', role: 'user', 
+        firstName: 'Charlie', lastName: 'Chocolate', address: 'Factory Lane 9', phone: '555-666-777' 
+    }
 ];
 
 const INVOICES = [
-    { id: 1, owner_id: 1, content: 'Faktura Zarządu (Tajne)', flag: 'FLAG-I-1{idor-in-memory}' },
-    { id: 2, owner_id: 2, content: 'Rachunek za Internet', flag: null },
-    { id: 3, owner_id: 2, content: 'Zakupy biurowe', flag: null }
+    // ADMIN (1)
+    { 
+        id: 100, owner_id: 1, 
+        title: 'Usługi Chmurowe AWS', 
+        content: 'Szczegóły: Opłata za instancje EC2 i S3 za miesiąc bieżący. Status: Opłacone.' 
+    },
+    { 
+        id: 101, owner_id: 1, 
+        title: 'Raport Audytu Bezpieczeństwa', 
+        content: 'TAJNE: Znaleziono krytyczną podatność. FLAG-I-1{hidden-in-content-idor}' // FLAGA
+    }, 
+    { 
+        id: 102, owner_id: 1, 
+        title: 'Licencja Enterprise Software', 
+        content: 'Klucz licencyjny: XXXX-YYYY-ZZZZ-AAAA. Ważny do 2026.' 
+    },
+    // USERS...
+    { id: 200, owner_id: 2, title: 'Sprzęt biurowy - Laptop', content: 'MacBook Pro M2 16GB RAM.' },
+    { id: 201, owner_id: 2, title: 'Zaopatrzenie kuchni', content: 'Kawa Arabica 20kg.' },
+    { id: 300, owner_id: 3, title: 'Odzież Ochronna', content: 'Kask żółty, kamizelka.' },
+    { id: 301, owner_id: 3, title: 'Materiały sypkie', content: 'Cement 500kg.' }
 ];
 
-// --- KONFIGURACJA ---
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-// LUKA: Brak flagi 'secure: true' (ciastka latają plain-textem), brak rotacji sesji
 app.use(session({
-    secret: 'super-secret-key', // Hardcoded secret
+    secret: 'super-secret-key',
     resave: false,
     saveUninitialized: true,
-    cookie: { httpOnly: false } // LUKA: Pozwala na dostęp do ciastka z poziomu JS (XSS)
+    cookie: { httpOnly: false }
 }));
 
-// --- MIDDLEWARE LOGUJĄCY (AUDIT) ---
-// Zapisuje logi do pliku na dysku (File System), podczas gdy dane są w RAM.
+// Logger
 app.use((req, res, next) => {
-    const log = `[${new Date().toISOString()}] IP:${req.ip} METHOD:${req.method} URL:${req.originalUrl} USER:${req.session.userId || 'guest'}\n`;
-    fs.appendFile('audit.log', log, (err) => { if (err) console.error(err); });
-    
-    // LUKA: Method Tampering Helper
-    // Pozwala nadpisać metodę HTTP parametrem ?_method=DELETE
-    if (req.query._method) {
-        req.method = req.query._method.toUpperCase();
-    }
+    const log = `[${new Date().toISOString()}] IP:${req.ip} METHOD:${req.method} URL:${req.originalUrl} USER_ID:${req.session.userId || 'guest'}\n`;
+    fs.appendFile('audit.log', log, () => {});
+    if (req.query._method) req.method = req.query._method.toUpperCase();
     next();
 });
 
-// --- ENDPOINTY ---
+// --- ROUTES ---
 
-// 1. Login
 app.get('/', (req, res) => res.render('login', { error: null }));
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    // Szukanie w tablicy w RAM
     const user = USERS.find(u => u.username === username && u.password === password);
-    
     if (user) {
         req.session.userId = user.id;
         req.session.role = user.role;
         req.session.username = user.username;
         return res.redirect('/dashboard');
     }
-    res.render('login', { error: 'Błędne dane' });
+    res.render('login', { error: 'Błędne dane logowania' });
 });
 
-// 2. Dashboard
 app.get('/dashboard', (req, res) => {
     if (!req.session.userId) return res.redirect('/');
     
-    // Filtrowanie tablicy pod użytkownika (to jest bezpieczne akurat)
     const myInvoices = INVOICES.filter(inv => inv.owner_id === req.session.userId);
+    const me = USERS.find(u => u.id === req.session.userId);
     
+    let allUsers = [];
+    let allInvoices = [];
+    
+    if (req.session.role === 'admin') {
+        allUsers = USERS;
+        // Ukrycie faktury 101 z listy (Logic vulnerability simulation)
+        allInvoices = INVOICES.filter(inv => inv.id !== 101);
+    }
+
     res.render('dashboard', { 
-        user: req.session, 
-        invoices: myInvoices 
+        user: me, 
+        invoices: myInvoices,
+        allUsers: allUsers,
+        allInvoices: allInvoices
     });
 });
 
-// 3. IDOR (LUKA)
-// Pobiera fakturę po ID, nie sprawdzając czy należy do zalogowanego usera
+// Endpoint JSON z contentem
 app.get('/invoice/:id', (req, res) => {
     if (!req.session.userId) return res.status(403).send('Zaloguj się');
-    
-    const invoiceId = parseInt(req.params.id);
-    const invoice = INVOICES.find(inv => inv.id === invoiceId);
-
+    const invoice = INVOICES.find(inv => inv.id === parseInt(req.params.id));
     if (!invoice) return res.status(404).send('Nie znaleziono');
-    
-    // Zwrot danych JSON (w tym flagi)
     res.json(invoice);
 });
 
-// 4. Parameter Tampering (LUKA)
-// Hacker dodaje pole 'role' do formularza, a serwer bezmyślnie aktualizuje obiekt
+// IDOR Edit
+app.get('/user/edit', (req, res) => {
+    if (!req.session.userId) return res.redirect('/');
+    const targetId = parseInt(req.query.id);
+    const targetUser = USERS.find(u => u.id === targetId);
+    if (!targetUser) return res.status(404).send('User not found');
+    res.render('edit-profile', { user: targetUser });
+});
+
 app.post('/user/update', (req, res) => {
     if (!req.session.userId) return res.status(403).send('Brak dostępu');
-
-    const userIndex = USERS.findIndex(u => u.id === req.session.userId);
+    
+    const targetId = parseInt(req.body.id);
+    const userIndex = USERS.findIndex(u => u.id === targetId);
+    
     if (userIndex === -1) return res.status(404).send('User error');
 
-    // VULN: Przepisanie wszystkich pól z body do obiektu użytkownika
-    // Jeśli w body jest { username: 'x', role: 'admin' }, to rola zostanie nadpisana
     Object.assign(USERS[userIndex], req.body);
     
-    // Aktualizacja sesji żeby od razu widzieć efekt
-    req.session.role = USERS[userIndex].role;
-    req.session.username = USERS[userIndex].username;
-
-    if (req.session.role === 'admin') {
-        return res.send("Profil zaktualizowany. ZDOBYTO FLAGĘ: FLAG-PT-1{admin-role-hacked}");
+    if (targetId === req.session.userId) {
+        req.session.role = USERS[userIndex].role;
+        req.session.username = USERS[userIndex].username;
     }
     res.redirect('/dashboard');
 });
 
-// 5. Method Tampering / Vertical Escalation (LUKA)
-// Teoretycznie admin only. W praktyce brak checka roli.
-// Dostępne przez POST /admin/delete?_method=DELETE
-app.delete('/admin/delete', (req, res) => {
-    // Brak: if (req.session.role !== 'admin') ...
-    
-    res.json({ 
-        status: 'success', 
-        msg: 'System cleaned.', 
-        flag: 'FLAG-MT-1{http-verb-tampering}' 
-    });
+// Admin Actions
+app.post('/admin/user/delete', (req, res) => {
+    if (req.session.role !== 'admin') return res.status(403).send('Access Denied');
+    const targetId = parseInt(req.body.target_id);
+    const index = USERS.findIndex(u => u.id === targetId);
+    if (index !== -1 && USERS[index].id !== req.session.userId) USERS.splice(index, 1);
+    res.redirect('/dashboard');
 });
 
-// 6. Public Endpoint / Memory Dump (LUKA)
-// Endpoint diagnostyczny, o którym zapomniano. Zrzuca stan pamięci.
-app.get('/debug/dump', (req, res) => {
-    res.json({
-        memory_usage: process.memoryUsage(),
-        active_users: USERS // Wyciek całej bazy użytkowników
-    });
+app.post('/admin/invoice/delete', (req, res) => {
+    if (req.session.role !== 'admin') return res.status(403).send('Access Denied');
+    const index = INVOICES.findIndex(inv => inv.id === parseInt(req.body.invoice_id));
+    if (index !== -1) INVOICES.splice(index, 1);
+    res.redirect('/dashboard');
 });
+
+app.delete('/admin/delete', (req, res) => {
+    res.json({ status: 'success', flag: 'FLAG-MT-1{http-verb-tampering}' });
+});
+
+app.get('/debug/dump', (req, res) => res.json({ users: USERS }));
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
