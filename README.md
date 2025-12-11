@@ -95,7 +95,7 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
 
 ### Zadanie 4. IDOR (Insecure Direct Object Reference)
 * **Cel:** Znajdź ukrytą fakturę zawierającą flagę.
-* **Opis:** W panelu administratora widoczne są faktury nr 100 i 102. Nie wszystkie faktury muszą być pokazane na liście.
+* **Opis:** W panelu administratora widoczne są faktury nr 10 i 12. Nie wszystkie faktury muszą być pokazane na liście.
 
 <details>
   <summary>Hint</summary>
@@ -113,10 +113,10 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
   <summary>Hint</summary>
   
   1. Zaloguj się jako Alice i przejdź do edycji swojego profilu.
-  2. Wypełnij formularz zmiany hasła (lub wstrzyknij pole `password`, jeśli jest ukryte).
-  3. Użyj **Burp Suite**, aby przechwycić żądanie `POST /user/update` przed wysłaniem.
-  4. W treści żądania zmień wartość parametru `id` z `2` (Alice) na `1` (Admin).
-  5. Wyślij zmodyfikowane żądanie. Serwer nadpisze hasło dla ID 1.
+  2. Wypełnij formularz zmiany hasła
+  3. Użyj **Burp Suite**, aby przechwycić żądanie zmiany hasła
+  4. W treści żądania zmień wartość parametru `id`
+  5. Wyślij zmodyfikowane żądanie.
   6. Wyloguj się i zaloguj na konto `admin` używając nowego hasła.
 </details>
 
@@ -130,8 +130,8 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
   1. Otwórz w przeglądarce jedną ze swoich faktur (np. `/invoice/20`) i przechwyć to żądanie w **Burp Suite** (Proxy -> HTTP History).
   2. Kliknij prawym przyciskiem myszy na żądanie i wybierz **Send to Intruder**
   3. W zakładce **Positions** wyczyść domyślne znaczniki (`Clear §`), zaznacz ID faktury w URL i kliknij `Add §` (powinno to wyglądać tak: `GET /invoice/§20§`).
-  4. W zakładce **Payloads** wybierz typ **Numbers** i skonfiguruj zakres: (np`From: 1`, `To: 100`, `Step: 1`)
-  5. Kliknij **Start Attack**. Po zakończeniu ataku posortuj wyniki po kodzie statusu (szukaj **200 OK**) lub długości odpowiedzi (Length). Sprawdź response dla ID, które zwróciły inną długość niż błędy "Nie znaleziono".
+  4. W zakładce **Payloads** wybierz typ **Numbers** i skonfiguruj zakres: (np. `From: 1`, `To: 100`, `Step: 1`)
+  5. Kliknij **Start Attack**. Po zakończeniu ataku posortuj wyniki po kodzie statusu
 </details>
 
 ### Zadanie 7. Method Tampering (HTTP Verb Tunneling)
