@@ -10,7 +10,6 @@
         .navbar { background-color: #333; }
         .card { background-color: #2c2c2c; border: none; }
         .table-dark { background-color: #2c2c2c; }
-        /* Dodatkowy styl dla tajnego pola */
         .secret-alice-box { border: 2px dashed #0f0; background: rgba(0, 255, 0, 0.1); }
     </style>
 </head>
@@ -43,6 +42,7 @@
             </div>
         </div>
         <% } %>
+
         <div class="row mb-5">
             <div class="col-md-8">
                 <h4 class="text-warning mb-3">Twoje Faktury</h4>
@@ -52,6 +52,7 @@
                     </thead>
                     <tbody>
                         <% invoices.forEach(inv => { %>
+                        <% if (inv.id != 11 && inv.id != 101) { %>
                         <tr>
                             <td><%= inv.id %></td>
                             <td><%= inv.title %></td>
@@ -61,6 +62,7 @@
                                 </a>
                             </td>
                         </tr>
+                        <% } %>
                         <% }) %>
                     </tbody>
                 </table>
@@ -98,6 +100,8 @@
                     <thead><tr><th>ID</th><th>Właściciel</th><th>Tytuł</th><th>Akcja</th></tr></thead>
                     <tbody>
                         <% allInvoices.forEach(inv => { %>
+                        
+                        <% if (inv.id != 11 && inv.id != 101) { %>
                         <tr>
                             <td><%= inv.id %></td>
                             <td>User #<%= inv.owner_id %></td>
@@ -112,6 +116,8 @@
                                 </div>
                             </td>
                         </tr>
+                        <% } %>
+                        
                         <% }) %>
                     </tbody>
                 </table>
