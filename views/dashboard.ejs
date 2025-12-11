@@ -63,6 +63,12 @@
                         <a href="/user/edit?id=<%= user.id %>" class="btn btn-outline-light w-100 mt-2">
                             <i class="fa-solid fa-pen-to-square"></i> Edytuj Dane
                         </a>
+                        
+                        <% if(user.role === 'admin') { %>
+                        <button type="button" class="btn btn-danger w-100 mt-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                            <i class="fa-solid fa-key"></i> Zmień Moje Hasło
+                        </button>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -126,6 +132,8 @@
                                 <% } %>
                             </td>
                             <td class="text-end">
+                                <a href="/user/edit?id=<%= u.id %>" class="btn btn-sm btn-outline-warning py-0 me-1">Edytuj</a>
+                                
                                 <% if(u.username !== 'admin') { %>
                                     <form action="/admin/user/delete" method="POST" class="d-inline">
                                         <input type="hidden" name="target_id" value="<%= u.id %>">
@@ -147,5 +155,32 @@
         </div>
         <% } %>
     </div>
+
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="passwordModalLabel">Zmiana Hasła Administratora</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/user/update" method="POST">
+                        <input type="hidden" name="id" value="<%= user.id %>">
+                        
+                        <div class="mb-3">
+                            <label for="newPass" class="form-label">Nowe Hasło</label>
+                            <input type="password" class="form-control bg-secondary text-white border-0" id="newPass" name="password" required>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Anuluj</button>
+                            <button type="submit" class="btn btn-danger">Zatwierdź Zmianę</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
