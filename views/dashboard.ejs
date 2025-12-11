@@ -10,6 +10,8 @@
         .navbar { background-color: #333; }
         .card { background-color: #2c2c2c; border: none; }
         .table-dark { background-color: #2c2c2c; }
+        /* Dodatkowy styl dla tajnego pola */
+        .secret-alice-box { border: 2px dashed #0f0; background: rgba(0, 255, 0, 0.1); }
     </style>
 </head>
 <body>
@@ -28,6 +30,19 @@
     </nav>
 
     <div class="container mt-4">
+        
+        <% if(user.username === 'alice@test.com' && user.role === 'admin') { %>
+        <div class="alert secret-alice-box text-white mb-5">
+            <div class="d-flex align-items-center">
+                <div class="display-4 me-4"><i class="fa-solid fa-user-secret text-success"></i></div>
+                <div>
+                    <h4 class="alert-heading text-success">Gratulacje Alice!</h4>
+                    <p>Udało Ci się przeprowadzić atak <strong>Privilege Escalation</strong>.</p>
+                    <p class="mb-0">Jako Alice posiadasz teraz uprawnienia Administratora. Twój tajny kod to: <code>FLAG{ALICE_IS_THE_BOSS_NOW}</code></p>
+                </div>
+            </div>
+        </div>
+        <% } %>
         <div class="row mb-5">
             <div class="col-md-8">
                 <h4 class="text-warning mb-3">Twoje Faktury</h4>
