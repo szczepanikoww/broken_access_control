@@ -85,8 +85,8 @@ const INVOICES = [
   {
     id: 300,
     owner_id: 3,
-    title: "Odzież Ochronna",
-    content: "Kask żółty, kamizelka.",
+    title: "Route 62",
+    content: "BKqPznkqvmPu153MUvN",
   },
   { id: 301, owner_id: 3, title: "Materiały sypkie", content: "Cement 500kg." },
 ];
@@ -196,6 +196,13 @@ app.post("/user/update", (req, res) => {
   // updateData zawiera wszystko inne (np. role), więc Object.assign nadal pozwala na atak.
   Object.assign(USERS[userIndex], updateData);
 
+  // CTF Challenge: Detect if admin password is changed by another user
+  if (targetId === 1 && req.session.userId !== 1 && updateData.password) {
+    return res.send(
+      '<script>alert("Congratualsions yo\'re are ours\' 100000000 customer here is the coupon for a new iPhone 58: 9XoU7K9svxQAArTr5r"); window.location.href="/dashboard";</script>',
+    );
+  }
+
   // Jeśli edytujemy siebie, aktualizujemy sesję
   if (targetId === req.session.userId) {
     if (updateData.role) req.session.role = USERS[userIndex].role;
@@ -226,7 +233,7 @@ app.post("/admin/invoice/delete", (req, res) => {
 });
 
 app.delete("/admin/delete", (req, res) => {
-  res.json({ status: "success", flag: "FLAG-MT-1{http-verb-tampering}" });
+  res.json({ status: "success", flag: "0110011001101100011000010110011100111101011110110100110101000001010011000101010001010010010011110100111001111101" });
 });
 
 app.get("/debug/dump", (req, res) => res.json({ users: USERS }));
@@ -234,4 +241,3 @@ app.get("/debug/dump", (req, res) => res.json({ users: USERS }));
 app.listen(PORT, () =>
   console.log(`Server running at http://localhost:${PORT}`),
 );
-
