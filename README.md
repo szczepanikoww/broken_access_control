@@ -65,7 +65,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 <details>
   <summary>Hint</summary>
 
-  1. Przechwyć żądanie wysyłania formularza edycji (Burp Suite lub DevTools Network).
+  1. Przechwyć żądanie wysyłania formularza edycji
   2. Dodaj do wysyłanych danych parametr: `role` z wartością `admin`.
   3. Wyślij zmodyfikowane żądanie.
 
@@ -78,7 +78,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 <details>
   <summary>Hint</summary>
   
-  1. Spróbuj odgadnąć ścieżkę do endpointu diagnostycznego (słowa kluczowe: `debug`, `dump`, `api`).
+  1. Spróbuj odgadnąć ścieżkę do endpointu diagnostycznego (słowa kluczowe: `debug`, `dump`, `api` itd.) 
   2. Wejdź bezpośrednio na ten adres.
   3. Otrzymasz JSON z hasłami wszystkich użytkowników.
   </details>
