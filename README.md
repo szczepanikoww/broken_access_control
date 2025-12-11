@@ -101,7 +101,7 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
   <summary>Hint</summary>
   
   1. Otwórz dowolną dostępną fakturę.
-  2. Zmień ID w URL na `101`.
+  2. Zmień ID w URL na `11`.
      
 </details>
 
@@ -127,10 +127,10 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
 <details>
   <summary>Hint</summary>
   
-  1. Otwórz w przeglądarce jedną ze swoich faktur (np. `/invoice/200`) i przechwyć to żądanie w **Burp Suite** (Proxy -> HTTP History).
+  1. Otwórz w przeglądarce jedną ze swoich faktur (np. `/invoice/20`) i przechwyć to żądanie w **Burp Suite** (Proxy -> HTTP History).
   2. Kliknij prawym przyciskiem myszy na żądanie i wybierz **Send to Intruder**
-  3. W zakładce **Positions** wyczyść domyślne znaczniki (`Clear §`), zaznacz ID faktury w URL i kliknij `Add §` (powinno to wyglądać tak: `GET /invoice/§200§`).
-  4. W zakładce **Payloads** wybierz typ **Numbers** i skonfiguruj zakres: (np`From: 1`, `To: 500`, `Step: 1`)
+  3. W zakładce **Positions** wyczyść domyślne znaczniki (`Clear §`), zaznacz ID faktury w URL i kliknij `Add §` (powinno to wyglądać tak: `GET /invoice/§20§`).
+  4. W zakładce **Payloads** wybierz typ **Numbers** i skonfiguruj zakres: (np`From: 1`, `To: 100`, `Step: 1`)
   5. Kliknij **Start Attack**. Po zakończeniu ataku posortuj wyniki po kodzie statusu (szukaj **200 OK**) lub długości odpowiedzi (Length). Sprawdź response dla ID, które zwróciły inną długość niż błędy "Nie znaleziono".
 </details>
 
@@ -141,8 +141,10 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
 <details>
   <summary>Hint</summary>
   
-  1. Wyślij żądanie `POST` na endpoint `/admin/delete`.
-  2. Dodaj parametr Query String: `?_method=DELETE`.
+  1. Włącz Burp Suite w trybie Intercept
+  2. Wyślij dowolne zapytanie (GET, POST)
+  3. Zamień treść zapytania na `POST /admin/delete`
+  4. Dodaj parametr: `?_method=DELETE`
 
 </details>
 
