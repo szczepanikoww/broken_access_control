@@ -64,11 +64,9 @@
                             <i class="fa-solid fa-pen-to-square"></i> Edytuj Dane
                         </a>
                         
-                        <% if(user.role === 'admin') { %>
                         <button type="button" class="btn btn-danger w-100 mt-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
                             <i class="fa-solid fa-key"></i> Zmień Moje Hasło
                         </button>
-                        <% } %>
                     </div>
                 </div>
             </div>
@@ -160,7 +158,7 @@
         <div class="modal-dialog">
             <div class="modal-content bg-dark text-white border-secondary">
                 <div class="modal-header border-secondary">
-                    <h5 class="modal-title" id="passwordModalLabel">Zmiana Hasła Administratora</h5>
+                    <h5 class="modal-title" id="passwordModalLabel">Zmiana Hasła</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

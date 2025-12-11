@@ -66,8 +66,8 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
   <summary>Hint</summary>
 
   1. Przechwyć żądanie wysyłania formularza edycji
-  2. Dodaj do wysyłanych danych parametr: `role` z wartością `admin`.
-  3. Wyślij zmodyfikowane żądanie.
+  2. Znajdź w zapytaniu pole `role` i wpisz wartość `admin`
+  3. Wyślij zmodyfikowane żądanie
 
 </details>
 
@@ -102,10 +102,9 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 <details>
   <summary>Hint</summary>
   
-  1. Będąc zalogowanym jako Alice, otwórz edycję swojego profilu.
-  2. W narzędziach developerskich zmień wartość ukrytego pola `id` z `2` na `1`.
-  3. Wpisz nowe hasło i zapisz zmiany.
-  4. Wyloguj się i zaloguj na konto `admin` nowym hasłem.
+  1. Będąc zalogowanym jako Alice, spróbuj zmienić swoje hasło (jeśli w zadaniu 2. udało ci się uzykać uprawnienia administratora, powinno pojawić się okno do edycji hasła)
+  2. W narzędziach developerskich przechwyć zapytanie i zmień hasło administratorowi (zmieniajac id w zapytaniu)
+  3. Wyloguj się i zaloguj na konto `admin` nowym hasłem.
 
 </details>
 
