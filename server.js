@@ -102,6 +102,12 @@ app.get('/dashboard', (req, res) => {
         allInvoices = INVOICES.filter(inv => inv.id !== 101);
     }
 
+    // Zabezpieczenie widoku przed błędem "me is undefined" (gdyby jednak coś poszło nie tak z sesją)
+    if (!me) {
+        req.session.destroy();
+        return res.redirect('/');
+    }
+
     res.render('dashboard', { 
         user: me, 
         invoices: myInvoices,
@@ -127,19 +133,28 @@ app.get('/user/edit', (req, res) => {
     res.render('edit-profile', { user: targetUser });
 });
 
+// --- FIX: NAPRAWIONY ENDPOINT UPDATE ---
 app.post('/user/update', (req, res) => {
     if (!req.session.userId) return res.status(403).send('Brak dostępu');
     
+    // Parsujemy ID do Number, aby znaleźć usera
     const targetId = parseInt(req.body.id);
     const userIndex = USERS.findIndex(u => u.id === targetId);
     
     if (userIndex === -1) return res.status(404).send('User error');
 
-    Object.assign(USERS[userIndex], req.body);
+    // FIX: Wyciągamy 'id' z danych formularza, aby nie nadpisać go stringiem "2" w bazie.
+    // Dzięki temu w bazie zostaje id: 2 (Number), a nie id: "2" (String).
+    const { id, ...updateData } = req.body;
+
+    // Podatność Mass Assignment zachowana: 
+    // updateData zawiera wszystko inne (np. role), więc Object.assign nadal pozwala na atak.
+    Object.assign(USERS[userIndex], updateData);
     
+    // Jeśli edytujemy siebie, aktualizujemy sesję
     if (targetId === req.session.userId) {
-        req.session.role = USERS[userIndex].role;
-        req.session.username = USERS[userIndex].username;
+        if (updateData.role) req.session.role = USERS[userIndex].role;
+        if (updateData.username) req.session.username = USERS[userIndex].username;
     }
     res.redirect('/dashboard');
 });
