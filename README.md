@@ -88,9 +88,12 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
 <details>
   <summary>Hint</summary>
   
-  1. Spróbuj odgadnąć ścieżkę do endpointu diagnostycznego (słowa kluczowe: `debug`, `dump`, `api` itd.) 
-  2. Wejdź bezpośrednio na ten adres.
-  3. Otrzymasz JSON z hasłami wszystkich użytkowników.
+  1. Za pomocą Burp Suite przechwyć dowolne zapytanie `GET`
+  2. Przekaż to zapytanie to Intrudera (**Send to Intruder**)
+  3. W zakładce **Positions** wyczyść domyślne znaczniki (`Clear §`), zaznacz cały zadres URL żądania i kliknij w `Add §` (powinno to wyglądać tak: `GET §/dashboard§`)
+  4. W zakładce **Payload** wrzuć słownik `dict_attack.txt` i na samym dole odznacz opcję `URL-encode these characters` (żeby Burp nie zamienił `/` na `%2f` )
+  5. Rozpocznij atak
+  6. Wyniki posortuj wg długości odpowiedzi (pole o innej długości powinno być naszym celem)
   </details>
 
 ### Zadanie 4. IDOR (Insecure Direct Object Reference)
