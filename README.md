@@ -41,11 +41,11 @@ cd broken_access_control
 
 ---
 
-## Zadania CTF (Scenariusze Ataków)
+## Zadania
 
 Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać nieautoryzowany dostęp do danych.
 
-### Zadanie 1. Horizontal Privilege Escalation (Pozioma Eskalacja Uprawnień)
+### Zadanie 1. Horizontal Privilege Escalation
 * **Cel:** Jako zwykły użytkownik, uzyskaj dostęp do prywatnych danych Administratora (np. numeru telefonu).
 
 * **Opis:** Aplikacja weryfikuje sesję, ale ufa parametrowi w URL do wyświetlenia formularza.
@@ -59,7 +59,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 
 </details>
 
-### Zadanie 2. Vertical Privilege Escalation (Pionowa Eskalacja Uprawnień)
+### Zadanie 2. Vertical Privilege Escalation
 * **Cel:** Uzyskaj uprawnienia Administratora (dostęp do czerwonego panelu w Dashboardzie).
 * **Podatność:** Mass Assignment (Masowe Przypisanie). Backend kopiuje cały obiekt JSON z żądania do obiektu użytkownika.
 
@@ -81,7 +81,7 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
 
 </details>
 
-### Zadanie 3. Force Browsing (Wymuszone Przeglądanie)
+### Zadanie 3. Forced Browsing
 * **Cel:** Znajdź ukryty endpoint diagnostyczny i dokonaj wycieku całej bazy danych.
 * **Opis:** Administrator ukrył link do narzędzia debugującego, ale nie zabezpieczył go autoryzacją.
 
@@ -105,7 +105,21 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
      
 </details>
 
-### Zadanie 5. Parameter Tampering (Kradzież Tożsamości)
+### Zadanie 5. IDOR part 2, Electric Boogaloo
+* **Cel:** Pobierz fakturę innego użytkownika.
+* **Opis:** Panel użytkownika pokazuje tylko Twoje faktury, ale Backend pozwala pobrać dowolną fakturę, jeśli znasz jej ID. Ponieważ identyfikatory mogą nie być oczywiste, ręczne zgadywanie jest nieefektywne – użyj automatyzacji.
+
+<details>
+  <summary>Hint</summary>
+  
+  1. Otwórz w przeglądarce jedną ze swoich faktur (np. `/invoice/20`) i przechwyć to żądanie w **Burp Suite** (Proxy -> HTTP History).
+  2. Kliknij prawym przyciskiem myszy na żądanie i wybierz **Send to Intruder**
+  3. W zakładce **Positions** wyczyść domyślne znaczniki (`Clear §`), zaznacz ID faktury w URL i kliknij `Add §` (powinno to wyglądać tak: `GET /invoice/§20§`).
+  4. W zakładce **Payloads** wybierz typ **Numbers** i skonfiguruj zakres: (np. `From: 1`, `To: 100`, `Step: 1`)
+  5. Kliknij **Start Attack**. Po zakończeniu ataku posortuj wyniki po kodzie statusu
+</details>
+
+### Zadanie 6. Parameter Tampering
 * **Cel:** Zmień hasło Administratora, nie znając jego starego hasła.
 * **Opis:** Mechanizm edycji profilu identyfikuje użytkownika na podstawie parametru `id` przesyłanego w żądaniu, ignorując kontekst sesji. Pozwala to na nadpisanie danych dowolnego konta.
 
@@ -120,21 +134,8 @@ Jeśli Burp nie będzie działał jako proxy dla przeglądarki Firefox, to w pra
   6. Wyloguj się i zaloguj na konto `admin` używając nowego hasła.
 </details>
 
-### Zadanie 6. Misconfigured Access Control
-* **Cel:** Pobierz fakturę innego użytkownika.
-* **Opis:** Panel użytkownika pokazuje tylko Twoje faktury, ale Backend pozwala pobrać dowolną fakturę, jeśli znasz jej ID. Ponieważ identyfikatory mogą nie być oczywiste, ręczne zgadywanie jest nieefektywne – użyj automatyzacji.
 
-<details>
-  <summary>Hint</summary>
-  
-  1. Otwórz w przeglądarce jedną ze swoich faktur (np. `/invoice/20`) i przechwyć to żądanie w **Burp Suite** (Proxy -> HTTP History).
-  2. Kliknij prawym przyciskiem myszy na żądanie i wybierz **Send to Intruder**
-  3. W zakładce **Positions** wyczyść domyślne znaczniki (`Clear §`), zaznacz ID faktury w URL i kliknij `Add §` (powinno to wyglądać tak: `GET /invoice/§20§`).
-  4. W zakładce **Payloads** wybierz typ **Numbers** i skonfiguruj zakres: (np. `From: 1`, `To: 100`, `Step: 1`)
-  5. Kliknij **Start Attack**. Po zakończeniu ataku posortuj wyniki po kodzie statusu
-</details>
-
-### Zadanie 7. Method Tampering (HTTP Verb Tunneling)
+### Zadanie 7. Method Tampering
 * **Cel:** Wykonaj administracyjną akcję usunięcia danych.
 * **Opis:** Firewall lub routing aplikacji blokuje bezpośrednie wywołania, ale backend obsługuje nadpisywanie metod HTTP (Tunneling).
 
