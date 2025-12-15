@@ -65,7 +65,7 @@ Twoim celem jest wykorzystanie luk w aplikacji, aby zdobyć flagi lub uzyskać n
 
 Do wykonania tego zadania potrzebne będzie skorzystanie z narzędzia "Burp Suite". Najpierw trzeba skonfigurować serwer proxy w przeglądarce: 
 
-1. Wyszukaj w pasku przeglądarki ```bash about:preferences```
+1. Wyszukaj w pasku przeglądarki ```about:preferences```
 2. Znajdź ustawienia serwera proxy
 3. Ustaw adres na 127.0.0.1 i port na 8080
 4. Wejdź w Burpa, w zakładce proxy włącz funkcję Intercept. 
