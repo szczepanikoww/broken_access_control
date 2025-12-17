@@ -18,7 +18,7 @@ Aplikacja działa w oparciu o **Node.js + Express** i wykorzystuje bazę danych 
 1. Sklonuj repozytorium:
 
 ```bash
-git clone https://github.com/szczepanikoww/brocken_access_control.git
+git clone https://github.com/szczepanikoww/broken_access_control.git
 ```
 
 Przejdź do katalogu wykonawczego:
